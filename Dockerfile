@@ -8,7 +8,5 @@ RUN apk add --no-cache curl \
 
 RUN apk add --no-cache curl jq openssh-client
 
-COPY --from=builder restic /usr/bin
-COPY restic /usr/local/bin
 COPY docker-backup.sh /usr/bin
 CMD ["/usr/bin/docker-backup.sh"]
