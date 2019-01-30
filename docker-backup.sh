@@ -105,6 +105,11 @@ function backup_file {
 	done
 }
 
+function control_container {
+	curl 192.168.178.5:8126/container/$1/$2
+	echo "[INFO] "$2"ing container" $1
+}
+
 # Find all the directories to backup and call backup_dir for each one
 function run_backup {
 	count_success=0
@@ -123,12 +128,14 @@ function run_backup {
 		if $(echo $container | jq ".Labels | has(\"napnap75.backup.dirs\")") ; then
 			for dir_name in $(echo $container | jq -r ".Labels | .[\"napnap75.backup.dirs\"]") ; do
 				echo "[INFO] Backing up dir" $dir_name "for container" $container_name
+				control_container $container_name Stop
 				backup_dir $dir_name $1
 				if [ $? -ne 0 ]; then
 					((++count_failure))
 				else
 					((++count_success))
 				fi
+				control_container $container_name Start
 			done
 		fi
 
