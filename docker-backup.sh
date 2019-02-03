@@ -60,7 +60,7 @@ function backup_dir {
 	# Check if the dir to backup is mounted as a subdirectory of /root inside this container
 	if [ -d "/root_fs$1" ] ; then
 		while true ; do
-			restic --hostname $2 backup /root_fs$1 &> restic_check.log
+			restic --host $2 backup /root_fs$1 &> restic_check.log
 			if [ $? -ne 0 ]; then
 				if grep -q "repository is already locked by" restic_check.log ; then
 					echo "[INFO] Repository locked, waiting ... and trying to unlock before trying to backup again"
@@ -86,7 +86,7 @@ function backup_dir {
 # Backup one file using Restic
 function backup_file {
 	while true ; do
-		cat $1 | restic backup --hostname $3 --stdin --stdin-filename $2 &> restic_check.log
+		cat $1 | restic backup --host $3 --stdin --stdin-filename $2 &> restic_check.log
 		if [ $? -ne 0 ]; then
 			if grep -q "repository is already locked by" restic_check.log ; then
 				echo "[INFO] Repository locked, waiting ... and trying to unlock before trying to backup again"
@@ -136,21 +136,6 @@ function run_backup {
 					((++count_success))
 				fi
 				control_container $container_name Start
-			done
-		fi
-
-		# Backup the volumes labelled with "napnap75.backup.volumes"
-		if $(echo $container | jq ".Labels | has(\"napnap75.backup.volumes\")") ; then
-			for volume_name in $(echo $container | jq -r ".Labels | .[\"napnap75.backup.volumes\"]") ; do
-				if [ $namespace != "null" ] ; then volume_name="${namespace}_${volume_name}" ; fi
-				volume_mount=$(echo $container | jq -r ".Mounts[] | select(.Name==\"$volume_name\") | .Source")
-				echo "[INFO] Backing up volume" $volume_name "with mount" $volume_mount "for container" $container_name
-				backup_dir $volume_mount $1
-				if [ $? -ne 0 ]; then
-					((++count_failure))
-				else
-					((++count_success))
-				fi
 			done
 		fi
 
