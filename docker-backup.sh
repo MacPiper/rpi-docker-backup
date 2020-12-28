@@ -175,6 +175,9 @@ function run_backup {
 	if [[ "$INFLUXDB_URL" != "" ]] ; then
 		curl -s -X POST --data-binary "backups,host=$HOSTNAME success=$count_success,failure=$count_failure" $INFLUXDB_URL
 	fi
+
+	echo "Remove old snapshots"
+	restic forget --keep-daily 7 --keep-weekly 5 --keep-monthly 12 --keep-yearly 75 --prune
 }
 
 # Set the hostname to the node name when used with Docker Swarm
