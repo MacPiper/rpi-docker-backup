@@ -50,7 +50,7 @@ function check_repository {
 			echo "[INFO] ... Repository has been created while waiting so I have nothing to do"
 		fi
 	fi
-	
+
 	cat restic_check.log
 	return $return_value
 }
@@ -177,7 +177,7 @@ function run_backup {
 	fi
 
 	echo "Remove old snapshots"
-	restic forget --keep-daily 7 --keep-weekly 5 --keep-monthly 12 --keep-yearly 75 --prune
+	restic forget --keep-daily 7 --keep-weekly 4 --keep-monthly 12 --keep-yearly 75 --prune
 }
 
 # Set the hostname to the node name when used with Docker Swarm
