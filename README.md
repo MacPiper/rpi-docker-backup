@@ -42,6 +42,8 @@ On your other containers (because the Docker socket is mounted on the backup con
 - `napnap75.backup.databases=%DATABASE_NAME%, %ANOTHER_DATABASE%` to backup MySQL/MariaDB databases (the environment variable MYSQL_ROOT_PASSWORD must be set with the root password on localhost or the root user must have no password on localhost)
 
 # Usage (additional functionnalities)
+- If the script shall stop the container during backup, add the label `napnap75.backup.stopstart` to the container. Otherwise it will remain running during backup, in case of
+  modifications during the backup it may be unusable.
 - The script is able to post a message to a Slack webhook when a backup is finished or failed. Add the `SLACK_URL` environment variable with the URL of your Slack webhook.
 - The script is able to store the results of the backup to a InfluxDB database. Add the `INFLUXDB_URL` environment variable with the URL of your database.
 

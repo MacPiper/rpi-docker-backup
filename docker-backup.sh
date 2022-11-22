@@ -106,7 +106,7 @@ function backup_file {
 }
 
 function control_container {
-	curl --silent 192.168.178.5:8126/container/$1/$2
+	curl -s --unix-socket /var/run/docker.sock -X POST http:/v1.41/containers/$1/$2
 	echo "[INFO] "$2"(p)ing container" $1
 }
 
@@ -127,7 +127,11 @@ function run_backup {
 		# Backup the dirs labelled with "napnap75.backup.dirs"
 		if $(echo $container | jq ".Labels | has(\"napnap75.backup.dirs\")") ; then
 			for dir_name in $(echo $container | jq -r ".Labels | .[\"napnap75.backup.dirs\"]") ; do
-				control_container $container_name Stop
+				if $(echo $container | jq ".Labels | has(\"napnap75.backup.stopstart\")") ; then
+					control_container $container_name stop
+				else
+					echo "[INFO] Not stopping container"
+				fi
 				echo "[INFO] Backing up dir" $dir_name "for container" $container_name
 				backup_dir $dir_name $1
 				if [ $? -ne 0 ]; then
@@ -135,7 +139,7 @@ function run_backup {
 				else
 					((++count_success))
 				fi
-				control_container $container_name Start
+				control_container $container_name start
 			done
 		fi
 
