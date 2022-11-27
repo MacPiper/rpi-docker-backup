@@ -1,0 +1,12 @@
+version: "3.1"
+services:
+  docker-backup:
+    build: .
+    volumes:
+      - /:/root_fs:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - RESTIC_REPOSITORY=${RESTIC_REPOSITORY}
+      - RESTIC_PASSWORD=${RESTIC_PASSWORD}
+      - SFTP_HOST=${SFTP_HOST}
+      - SFTP_KEY=${SFTP_KEY}
