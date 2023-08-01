@@ -8,4 +8,4 @@ if [[ "$AWS_SECRET_ACCESS_KEY" = /* && -f "$AWS_SECRET_ACCESS_KEY" ]] ; then
 	AWS_SECRET_ACCESS_KEY=$(cat $AWS_SECRET_ACCESS_KEY)
 fi
 
-/usr/bin/restic $*
+/bin/restic $*

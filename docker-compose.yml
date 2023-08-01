@@ -1,7 +1,11 @@
 version: "3.1"
 services:
   docker-backup:
+    container_name: rpi-backup
     build: .
+    restart: unless-stopped
+    # somehow ssh/sftp to diskstation does no more work with bridge network
+    network_mode: "host"
     volumes:
       - /:/root_fs:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro

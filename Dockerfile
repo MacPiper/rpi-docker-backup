@@ -1,5 +1,6 @@
 # Builder image
-FROM napnap75/rpi-alpine-base:latest as builder
+#FROM napnap75/rpi-alpine-base:latest as builder
+FROM alpine:latest as builder
 
 # Download the required software
 RUN apk add --no-cache curl \
@@ -9,13 +10,21 @@ RUN apk add --no-cache curl \
 	&& chmod +x restic
 
 # Final image
-FROM napnap75/rpi-alpine-base:latest
+#FROM napnap75/rpi-alpine-base:latest
+FROM alpine:latest
 
 # Download the required software
-RUN apk add --no-cache curl jq openssh-client
+RUN apk add --no-cache curl jq openssh-client bash
 
-# Define default command
-COPY --from=builder restic /usr/bin
+# COPY restic bin
+COPY --from=builder restic /bin
+# COPY restic wrapper script
 COPY restic /usr/local/bin
-COPY docker-backup.sh /usr/bin
-CMD ["/usr/bin/docker-backup.sh"]
+COPY docker-backup.sh /bin
+CMD ["/bin/docker-backup.sh"]
+# Uncomment in place of above CMD for test run
+#CMD ["/bin/docker-backup.sh", "run-once"]
+
+# Uncomment in place of above CMD for debugging
+#COPY dummy.sh /bin
+#CMD [ "/bin/dummy.sh" ]
