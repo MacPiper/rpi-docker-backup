@@ -9,8 +9,10 @@ services:
     volumes:
       - /:/root_fs:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /etc/localtime:/etc/localtime:ro
     environment:
       - RESTIC_REPOSITORY=${RESTIC_REPOSITORY}
       - RESTIC_PASSWORD=${RESTIC_PASSWORD}
       - SFTP_HOST=${SFTP_HOST}
       - SFTP_KEY=${SFTP_KEY}
+      - TZ=Europe/Berlin

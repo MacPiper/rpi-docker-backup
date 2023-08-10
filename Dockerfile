@@ -1,5 +1,4 @@
 # Builder image
-#FROM napnap75/rpi-alpine-base:latest as builder
 FROM alpine:latest as builder
 
 # Download the required software
@@ -14,7 +13,7 @@ RUN apk add --no-cache curl \
 FROM alpine:latest
 
 # Download the required software
-RUN apk add --no-cache curl jq openssh-client bash
+RUN apk add --no-cache curl jq openssh-client tzdata bash
 
 # COPY restic bin
 COPY --from=builder restic /bin
